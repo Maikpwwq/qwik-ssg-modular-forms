@@ -171,36 +171,6 @@ export default component$(() => {
     async (values: LoginForm, event: any) => {
       // Runs on CLIENT
       console.log("handleSubmit", values, event);
-      // try {
-      //   // const resume = await connectionDB(values);
-
-      //   await mongoose.connect(MONGO_HOST, options).catch((error) => {
-      //     console.log("mongoose connection error", error);
-      //   });
-      //   // console.log('mongoose.connection', mongoose.connection.mongo.DB)
-      //   const userModel = mongoose.model(MONGODB_COLLECTION, messageSchema);
-      //   const res = await userModel.create(values);
-      //   const _id = res._id;
-      //   const customerId = JSON.stringify(_id);
-
-      //   if (customerId) {
-      //     // const record = JSON.parse(resume);
-      //     console.log("Promise message", customerId); //, record
-      //     // setResponse(loginForm, response); // , options
-      //     return {
-      //       status: "success",
-      //       message: "Gracias, su mensaje ha sido recibido.",
-      //       data: { customerId: "record" },
-      //     };
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      //   return {
-      //     status: "error",
-      //     message: "No se ha podido enviar su mensaje.",
-      //     data: { customerId: "" },
-      //   };
-      // }
     }
   );
 
