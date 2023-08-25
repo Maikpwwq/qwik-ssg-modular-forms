@@ -36,6 +36,8 @@ const options = {
   dbName: DB_NAME,
   user: DB_USER,
   pass: DB_PASSWORD2,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 };
 
 export const connectionDB = $(async (contactData: LoginForm) => {

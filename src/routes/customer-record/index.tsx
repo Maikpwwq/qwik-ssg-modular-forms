@@ -72,25 +72,25 @@ export const useFormAction = formAction$<LoginForm, ResponseData>(
       const { name, email, phone, issue, message } = values;
       // const recordID : string = uuidv4();
       // Genera un número aleatorio entre 1 y 1000
-      const hexNumber : number = Math.floor(Math.random() * 1000) + 1; // parseInt(recordID.replace(/-/g, ''), 16);
+      // const hexNumber : number = Math.floor(Math.random() * 1000) + 1; // parseInt(recordID.replace(/-/g, ''), 16);
       const { data: customer_form, error } = await supabase
         .from("customer_form")
         .insert([{ created_at: new Date(), name, email, phone, issue, message }])
         .select("*");
 
       console.log("supabase contact form", customer_form, error);
+      
+      if (error) {
+        throw new Error(`Supabase contact: ${error}`);
+      }
+
       if (customer_form) {
         console.log("Success supabase contact form", customer_form[0].id);
       }
-
-      if (error) {
-        console.log("Error supabase contact form", error);
-      }
-
       return {
         status: "success",
-        message: `Gracias, su mensaje ha sido recibido. ${hexNumber}`,
-        data: { customerId: hexNumber.toString() },
+        message: `Gracias, su mensaje ha sido recibido. ${customer_form[0].id}`,
+        data: { customerId: customer_form[0].id.toString() },
       };
     } catch (error) {
       console.error(error);
