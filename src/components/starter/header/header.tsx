@@ -11,15 +11,6 @@ export default component$(() => {
             <QwikLogo height={50} width={143} />
           </a>
         </div>
-        <ul>
-          <li>
-            <a
-              href="/customer-form/"
-            >
-              Form
-            </a>
-          </li>
-        </ul>
       </div>
     </header>
   );

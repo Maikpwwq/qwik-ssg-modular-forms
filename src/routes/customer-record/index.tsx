@@ -1,12 +1,13 @@
 import { component$, $, useTask$ } from "@builder.io/qwik"; // , useSignal
 import { isServer } from "@builder.io/qwik/build";
-// import { connectionDB } from "~/services/mongo-init";
+import { createClient } from "@supabase/supabase-js";
+// import { v4 as uuidv4 } from 'uuid'
 import clsx from "clsx";
 import {
   routeLoader$,
   z,
 } from "@builder.io/qwik-city";
-import type { InitialValues, SubmitHandler } from "@modular-forms/qwik"; 
+import type { InitialValues, SubmitHandler } from "@modular-forms/qwik"; //
 import {
   useForm,
   formAction$,
@@ -17,53 +18,8 @@ import styles from "~/components/modular-forms/modularForm.module.css";
 import { MUITypography, MUIPaper } from "~/integrations/react/mui";
 import { TextInput } from "~/components/modular-forms/TextInput";
 
-import mongoose from "mongoose";
-const DB_USER = `${import.meta.env.VITE_DB_USER}`;
-const DB_PASSWORD2 = `${import.meta.env.VITE_DB_PASSWORD2}`;
-const DB_NAME = `${import.meta.env.VITE_DB_NAME}`;
-const MONGODB_COLLECTION = `${import.meta.env.VITE_MONGODB_COLLECTION}`;
-const MONGO_HOST = `${import.meta.env.VITE_MONGO_HOST}`;
-
-const messageSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  phone: String,
-  issue: String,
-  message: String,
-});
-
-const options = {
-  dbName: DB_NAME,
-  user: DB_USER,
-  pass: DB_PASSWORD2,
-};
-
-export const connectionDB = $(async (contactData: LoginForm) => {
-  console.log("connectionDB", contactData, MONGO_HOST, MONGODB_COLLECTION);
-  try {
-    await mongoose.connect(MONGO_HOST, options).catch((error) => {
-      console.log("mongoose connection error", error);
-    });
-
-    const userModel = mongoose.model(MONGODB_COLLECTION, messageSchema);
-
-    return await userModel
-      .create(contactData)
-      .then((data) => {
-        const _id = data._id.toString();
-        console.log("create userModel", _id, typeof _id);
-        return _id;
-
-      })
-      .catch((err) => {
-        console.error("err", err);
-        throw new Error("Error mientras se retorno _id de registro.");
-      });
-  } catch (error) {
-    console.error("error", error);
-    throw new Error("Error mientras se accedio a crear un nuevo registro.");
-  }
-});
+const SUPABASE_URL = `${import.meta.env.VITE_SUPABASE_URL}`;
+const SUPABASE_KEY = `${import.meta.env.VITE_SUPABASE_KEY}`;
 
 type LoginForm = {
   name: string;
@@ -107,19 +63,37 @@ type ResponseData = {
 };
 
 export const useFormAction = formAction$<LoginForm, ResponseData>(
-  async (values: LoginForm) => {
+  async (values) => {
     // Runs on SERVER
     console.log("useFormAction", values);
     try {
-      const recordID = await connectionDB(values);
-      console.log("Promise message", recordID);
+      // Create a single supabase client for interacting with your database
+      const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { name, email, phone, issue, message } = values;
+      // const recordID : string = uuidv4();
+      // Genera un número aleatorio entre 1 y 1000
+      const hexNumber : number = Math.floor(Math.random() * 1000) + 1; // parseInt(recordID.replace(/-/g, ''), 16);
+      const { data: customer_form, error } = await supabase
+        .from("customer_form")
+        .insert([{ created_at: new Date(), name, email, phone, issue, message }])
+        .select("*");
+
+      console.log("supabase contact form", customer_form, error);
+      if (customer_form) {
+        console.log("Success supabase contact form", customer_form[0].id);
+      }
+
+      if (error) {
+        console.log("Error supabase contact form", error);
+      }
+
       return {
         status: "success",
-        message: `Gracias, su mensaje ha sido recibido. ${recordID}`,
-        data: { customerId: recordID },
+        message: `Gracias, su mensaje ha sido recibido. ${hexNumber}`,
+        data: { customerId: hexNumber.toString() },
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {
         status: "error",
         message: `No se ha podido enviar su mensaje. ${error}`,
@@ -127,7 +101,7 @@ export const useFormAction = formAction$<LoginForm, ResponseData>(
       };
     }
   },
-  zodForm$(loginSchema)
+  zodForm$(loginSchema),
 ); // valiForm$(LoginSchema)
 
 export default component$(() => {
@@ -141,10 +115,10 @@ export default component$(() => {
   });
 
   const handleSubmit = $<SubmitHandler<LoginForm>>(
-    async (values: LoginForm, event: any) => {
+    async (values: any, event: any) => {
       // Runs on CLIENT
       console.log("handleSubmit", values, event);
-    }
+    },
   );
 
   const successData = $(async () => {
@@ -152,7 +126,7 @@ export default component$(() => {
       "handleSubmitSuccess",
       loginForm.submitted,
       loginForm.submitting,
-      loginForm.response
+      loginForm.response,
     );
     alert(loginForm.response.message);
     reset(loginForm); // , useFormLoader

@@ -33,6 +33,7 @@
     "@types/node": "^20.4.0",
     "@types/react": "18.2.13",
     "@types/react-dom": "18.2.6",
+    "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "5.61.0",
     "@typescript-eslint/parser": "5.61.0",
     "eslint": "8.44.0",
@@ -47,8 +48,10 @@
   },
   "dependencies": {
     "@modular-forms/qwik": "^0.20.0",
+    "@supabase/supabase-js": "^2.33.1",
     "clsx": "^2.0.0",
     "mongodb": "^5.7.0",
-    "mongoose": "^7.4.2"
+    "mongoose": "^7.4.2",
+    "uuid": "^9.0.0"
   }
 }
