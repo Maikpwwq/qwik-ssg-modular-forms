@@ -1,7 +1,7 @@
 import { component$, $, useTask$ } from "@builder.io/qwik"; // , useSignal
 import { isServer } from "@builder.io/qwik/build";
 import { createClient } from "@supabase/supabase-js";
-import { Database } from './database.types'
+import type { Database } from '~/types/database.types'
 // import { v4 as uuidv4 } from 'uuid'
 import clsx from "clsx";
 import {
